@@ -89,55 +89,6 @@ echo ""
 (cd /work && rm -rf libiptcdata* && wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libiptcdata/1.0.4-6ubuntu1/libiptcdata_1.0.4.orig.tar.gz && tar xzvf libiptcdata_1.0.4.orig.tar.gz && cd libiptcdata-1.0.4 && ./configure --prefix=/usr/local && make -j 2 install) || exit 1
 
 
-# Install missing six python module
-cd /work || exit 1
-rm -f get-pip.py
-wget https://bootstrap.pypa.io/get-pip.py
-python get-pip.py
-pip install six || exit 1
-#python3 get-pip.py
-#pip install six || exit 1
-#exit
-
-
-
-
-echo ""
-echo "########################################################################"
-echo ""
-echo "Building and installing zenity"
-echo ""
-
-(cd /work && rm -rf zenity && git clone https://github.com/aferrero2707/zenity.git && \
-cd zenity && ./autogen.sh && ./configure --prefix=/usr/local && make install) || exit 1
-
-#exit
-
-
-echo ""
-echo "########################################################################"
-echo ""
-echo "Building and installing expat 2.2.5"
-echo ""
-
-(cd /work && rm -rf expat* && \
-wget https://github.com/libexpat/libexpat/releases/download/R_2_2_5/expat-2.2.5.tar.bz2 && \
-tar xvf expat-2.2.5.tar.bz2 && cd "expat-2.2.5" && \
-./configure --prefix=/usr/local && make -j 2 install) || exit 1
-
-
-echo ""
-echo "########################################################################"
-echo ""
-echo "Building and installing libtiff 4.0.9"
-echo ""
-
-(cd /work && rm -rf tiff* && \
-wget http://download.osgeo.org/libtiff/tiff-4.0.9.tar.gz && \
-tar xvf tiff-4.0.9.tar.gz && cd "tiff-4.0.9" && \
-./configure --prefix=/usr/local && make -j 2 install) || exit 1
-
-
 echo ""
 echo "########################################################################"
 echo ""
@@ -149,23 +100,6 @@ export PATH=$HOME/.cargo/bin:$PATH
 rm -rf librsvg* && wget http://ftp.gnome.org/pub/gnome/sources/librsvg/2.40/librsvg-2.40.16.tar.xz && \
 tar xvf librsvg-2.40.16.tar.xz && cd librsvg-2.40.16 && \
 ./configure --prefix=/usr/local && make -j 2 install) || exit 1
-
-
-LFV=0.3.2
-echo ""
-echo "########################################################################"
-echo ""
-echo "Building and installing LensFun $LFV"
-echo ""
-
-# Lensfun build and install
-(cd /work && rm -rf lensfun* && \
-wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/lensfun/0.3.2-4/lensfun_0.3.2.orig.tar.gz && \
-tar xzvf "lensfun_0.3.2.orig.tar.gz" && cd "lensfun-${LFV}" && \
-patch -p1 < $AI_SCRIPTS_DIR/lensfun-glib-libdir.patch && \
-mkdir -p build && cd build && 
-cmake3 -DCMAKE_BUILD_TYPE="release" -DCMAKE_INSTALL_PREFIX="/usr/local" ../ && \
-make --jobs=2 VERBOSE=1 install) || exit 1
 
 
 echo ""
@@ -190,43 +124,6 @@ ls /${PREFIX}/share/icons
 echo ""
 
 
-echo ""
-echo "########################################################################"
-echo ""
-echo "Building and installing RawTherapee"
-echo ""
-
-cd /sources
-export GIT_DESCRIBE=$(git describe)
-patch -N -p0 < /sources/ci/rt-lensfundbdir.patch #|| exit 1
-
-# RawTherapee build and install
-if [ x"${RT_BRANCH}" = "xreleases" ]; then
-    CACHE_SUFFIX=""
-else
-    CACHE_SUFFIX="5-${RT_BRANCH}-ai"
-fi
-echo "RT cache suffix: \"${CACHE_SUFFIX}\""
-mkdir -p /work/build/rt || exit 1
-cd /work/build/rt || exit 1
-rm -f /work/build/rt/CMakeCache.txt
-cmake3 \
-    -DCMAKE_BUILD_TYPE="release"  \
-    -DCACHE_NAME_SUFFIX="${CACHE_SUFFIX}" \
-    -DPROC_TARGET_NUMBER="0" \
-    -DBUILD_BUNDLE="ON" \
-    -DCMAKE_INSTALL_PREFIX="/usr/local/rt" \
-    -DBUNDLE_BASE_INSTALL_DIR="/usr/local/rt/bin" \
-    -DDATADIR=".." \
-    -DLENSFUNDBDIR="share/lensfun/version_1" \
-    -DOPTION_OMP="ON" \
-    -DWITH_LTO="OFF" \
-    -DWITH_PROF="OFF" \
-    -DWITH_SAN="OFF" \
-    -DWITH_SYSTEM_KLT="OFF" \
-    /sources || exit 1
-make --jobs=2 || exit 1
-make install || exit 1
 
 touch /work/build.done
 
