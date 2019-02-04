@@ -28,6 +28,9 @@ yum install -y intltool make git swig python-setuptools gettext gcc-c++ \
   gtk3 gobject-introspection || exit 1
 
 
+export CFLAGS='-Ofast -ftree-vectorize -fopt-info-vec-optimized -march=westmere -mtune=westmere -funsafe-math-optimizations -funsafe-loop-optimizations'
+
+
 mkdir -p /work || exit 1
 cd /work || exit 1
 if [ ! -e libmypaint ]; then
