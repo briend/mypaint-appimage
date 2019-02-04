@@ -28,7 +28,7 @@ yum install -y intltool make git swig python-setuptools gettext gcc-c++ \
   gtk3 gobject-introspection || exit 1
 
 # Optimize compiler flags
-export CFLAGS='-Ofast -ftree-vectorize -fopt-info-vec-optimized -march=native -mtune=native -funsafe-math-optimizations -funsafe-loop-optimizations'
+export CFLAGS='-Ofast -ftree-vectorize -fopt-info-vec-optimized -funsafe-math-optimizations -funsafe-loop-optimizations'
 
 
 mkdir -p /work || exit 1
